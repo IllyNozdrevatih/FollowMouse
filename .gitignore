@@ -1,0 +1,25 @@
+.DS_Store
+/**/.DS_Store
+
+.idea
+
+# dependencies
+node_modules
+
+# logs
+npm-debug.log
+
+# Nuxt build
+.nuxt
+
+# Nuxt generate
+/dist
+
+.env
+
+local-ssl/localhost.*
+
+coverage
+
+# удаляет старую прапку
+_src
