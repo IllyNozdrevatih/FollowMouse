@@ -11,6 +11,8 @@ const gui = new dat.GUI();
 // global variables
 let mixer = null;
 let action = null;
+let modelAnimations = null;
+let modelAnimationID = null;
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -18,6 +20,9 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+/**
+ * Model
+ */
 const GLTFloader = new GLTFLoader();
 
 const addFoxModel = ( function (x = 0, z = 0){
@@ -40,7 +45,9 @@ const addFoxModel = ( function (x = 0, z = 0){
         // model.animations.forEach((clip) => {mixer.clipAction(clip).play(); });
 
         // mixer.update( delta )
-        action = mixer.clipAction( model.animations[ 1 ] );
+        modelAnimations = model.animations
+        modelAnimationID = 1
+        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
         action.play();
 
         scene.add(model.scene)
@@ -62,6 +69,9 @@ plane.rotation.x = Math.PI * 0.5 * -1;
 
 scene.add(plane)
 
+/**
+ * Light
+ */
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight)
 
@@ -145,7 +155,18 @@ canvas.addEventListener('mousemove', (event) => {
         )
     ) {
         foxModel.position.x = foxPositionX
-        foxModel.position.z =  foxPositionZ
+        foxModel.position.z = foxPositionZ
+
+        modelAnimationID = 1
+        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+        action.play();
+    } else {
+        if (modelAnimationID === 1) {
+            action.stop();
+            modelAnimationID = 0
+            action = mixer.clipAction( modelAnimations[ 0 ] );
+            action.play();
+        }
     }
 
     foxModel.lookAt(0,0)
