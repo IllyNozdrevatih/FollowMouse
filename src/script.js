@@ -46,8 +46,9 @@ const addFoxModel = ( function (x = 0, z = 0){
 
         // mixer.update( delta )
         modelAnimations = model.animations
-        modelAnimationID = 1
+        modelAnimationID = 0
         action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+        action.setEffectiveTimeScale(0.3)
         action.play();
 
         scene.add(model.scene)
@@ -157,14 +158,17 @@ canvas.addEventListener('mousemove', (event) => {
         foxModel.position.x = foxPositionX
         foxModel.position.z = foxPositionZ
 
-        modelAnimationID = 1
-        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
-        action.play();
+        if (modelAnimationID === 0) {
+            action.stop();
+            modelAnimationID = 1
+            action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+            action.play();
+        }
     } else {
         if (modelAnimationID === 1) {
             action.stop();
             modelAnimationID = 0
-            action = mixer.clipAction( modelAnimations[ 0 ] );
+            action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
             action.play();
         }
     }
