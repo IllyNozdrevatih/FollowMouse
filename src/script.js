@@ -97,8 +97,8 @@ gui.add(directionalLight.position,'z').min(-5).max(5).step(0.05).name('direction
  * Sizes
  */
 const sizes = {
-    width: 1920,
-    height: 937
+    width: window.innerWidth,
+    height: window.innerHeight
 }
 
 /**
