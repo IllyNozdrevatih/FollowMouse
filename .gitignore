@@ -20,6 +20,4 @@ npm-debug.log
 local-ssl/localhost.*
 
 coverage
-
-# удаляет старую прапку
-_src
+.package-lock.json
