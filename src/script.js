@@ -127,54 +127,100 @@ controls.enableDamping = true
 controls.dampingFactor = 0.25
 controls.enableZoom = true
 
-canvas.addEventListener('mousemove', (event) => {
-    const xPos = event.clientX;
-    const yPos = event.clientY;
+// canvas.addEventListener('mousemove', (event) => {
+//     const xPos = event.clientX;
+//     const yPos = event.clientY;
+//
+//     const foxModel = scene.children[scene.children.length-1];
+//
+//     const scale = 0.008;
+//     const foxPositionZ = ((xPos * scale) - sizes.width / 2  * scale)
+//     const foxPositionX =  ((yPos * scale) - sizes.height / 2  * scale) * -1
+//
+//     const inActivePositionCenter = 0.5
+//     const inActivePositionBorder = 2.5
+//
+//     if (
+//         (
+//             foxPositionX >= inActivePositionCenter ||
+//             foxPositionX <= -inActivePositionCenter ||
+//             foxPositionZ >= inActivePositionCenter ||
+//             foxPositionZ <= -inActivePositionCenter
+//         )
+//             &&
+//         (
+//             foxPositionX <= inActivePositionBorder &&
+//             foxPositionX >= -inActivePositionBorder &&
+//             foxPositionZ <= inActivePositionBorder &&
+//             foxPositionZ >= -inActivePositionBorder
+//         )
+//     ) {
+//         foxModel.position.x = foxPositionX
+//         foxModel.position.z = foxPositionZ
+//
+//         if (modelAnimationID === 0) {
+//             action.stop();
+//             modelAnimationID = 1
+//             action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+//             action.play();
+//         }
+//     } else {
+//         if (modelAnimationID === 1) {
+//             action.stop();
+//             modelAnimationID = 0
+//             action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+//             action.play();
+//         }
+//     }
+//
+//     foxModel.lookAt(0,0)
+// })
 
+
+window.addEventListener('keydown', (event) => {
+    const keyNumberLeft = 37
+    const keyNumberTop = 38
+    const keyNumberRight = 39
+    const keyNumberDown = 40
+
+    const scalePosition = 0.05
+    const keyCode = event.keyCode
     const foxModel = scene.children[scene.children.length-1];
 
-    const scale = 0.008;
-    const foxPositionZ = ((xPos * scale) - sizes.width / 2  * scale)
-    const foxPositionX =  ((yPos * scale) - sizes.height / 2  * scale) * -1
 
-    const inActivePositionCenter = 0.5
-    const inActivePositionBorder = 2.5
-
-    if (
-        (
-            foxPositionX >= inActivePositionCenter ||
-            foxPositionX <= -inActivePositionCenter ||
-            foxPositionZ >= inActivePositionCenter ||
-            foxPositionZ <= -inActivePositionCenter
-        )
-            &&
-        (
-            foxPositionX <= inActivePositionBorder &&
-            foxPositionX >= -inActivePositionBorder &&
-            foxPositionZ <= inActivePositionBorder &&
-            foxPositionZ >= -inActivePositionBorder
-        )
-    ) {
-        foxModel.position.x = foxPositionX
-        foxModel.position.z = foxPositionZ
-
-        if (modelAnimationID === 0) {
-            action.stop();
-            modelAnimationID = 1
-            action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
-            action.play();
-        }
-    } else {
-        if (modelAnimationID === 1) {
-            action.stop();
-            modelAnimationID = 0
-            action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
-            action.play();
-        }
+    if (keyCode === keyNumberTop) {
+        if (foxModel.rotation.y !== Math.PI * 0.5) foxModel.rotation.y = Math.PI * 0.5
+        foxModel.position.x += scalePosition
+    }
+    if (keyCode === keyNumberDown) {
+        if (foxModel.rotation.y !== Math.PI * 1.5) foxModel.rotation.y = Math.PI * 1.5
+        foxModel.position.x -= scalePosition
+    }
+    if (keyCode === keyNumberLeft) {
+        if (foxModel.rotation.y !== Math.PI) foxModel.rotation.y = Math.PI
+        foxModel.position.z -= scalePosition
+    }
+    if (keyCode === keyNumberRight) {
+        if (foxModel.rotation.y !== Math.PI * 2) foxModel.rotation.y = Math.PI * 2
+        foxModel.position.z += scalePosition
     }
 
-    foxModel.lookAt(0,0)
+    if (modelAnimationID === 0){
+        action.stop();
+        modelAnimationID = 1
+        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+        action.play();
+    }
 })
+window.addEventListener('keyup', (event) => {
+    if (modelAnimationID === 1){
+        action.stop();
+        modelAnimationID = 0
+        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+        action.play();
+    }
+})
+
 
 const clock = new THREE.Clock()
 
