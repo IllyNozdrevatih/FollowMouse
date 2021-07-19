@@ -21,10 +21,13 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 /**
- * Model
+ * Models
  */
 const GLTFloader = new GLTFLoader();
 
+/**
+ * Fox Model
+ */
 const addFoxModel = ( function (x = 0, z = 0){
     GLTFloader.load( '/models/azeria/scene.gltf', function ( model ) {
         model.scene.scale.set(0.01, 0.01, 0.01);
@@ -57,6 +60,46 @@ const addFoxModel = ( function (x = 0, z = 0){
     } )
 } );
 addFoxModel(0.5, 0)
+
+
+/**
+ * Chicken Model
+ */
+const addChickenModel = ( function (x = 0, z = 0){
+    GLTFloader.load( '/models/chicken/scene.gltf', function ( model ) {
+        model.scene.scale.set(0.001, 0.001, 0.001);
+        // model.scene.rotation.y = Math.PI * 0.5 * -1
+        model.scene.position.x = x
+        model.scene.position.z = z
+
+        // console.log('model.castShadow', model.scene.receiveShadow)
+        // model.scene.castShadow = true; //default is false
+        // model.scene.receiveShadow = false; //default
+
+        // model.scene.traverse( function( node ) {
+        //     if ( node.isMesh || node.isLight ) node.castShadow = true;
+        //     if ( node.isMesh || node.isLight ) node.receiveShadow = false;
+        // } );
+
+        mixer = new THREE.AnimationMixer(model.scene);
+        // model.animations.forEach((clip) => {mixer.clipAction(clip).play(); });
+
+        // mixer.update( delta )
+        modelAnimations = model.animations
+        modelAnimationID = 0
+        console.log('model.scene', model.scene)
+        // action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+        // action.play();
+        // model.scene.name = 'chicken';
+        model.scene.rotation.y = Math.PI * 0.5
+        // model.scene.renderOrder = 1
+
+        scene.add(model.scene)
+    }, undefined, function ( error ) {
+        console.error( error );
+    } )
+} );
+addChickenModel(0,-1)
 /**
  * Objects
  */
@@ -69,6 +112,7 @@ plane.receiveShadow = true;
 plane.rotation.x = Math.PI * 0.5 * -1;
 
 scene.add(plane)
+
 
 /**
  * Light
@@ -185,8 +229,11 @@ window.addEventListener('keydown', (event) => {
 
     const scalePosition = 0.05
     const keyCode = event.keyCode
+
+
     const foxModel = scene.children[scene.children.length-1];
 
+    // console.log('foxModel', foxModel)
 
     if (keyCode === keyNumberTop) {
         if (foxModel.rotation.y !== Math.PI * 0.5) foxModel.rotation.y = Math.PI * 0.5
@@ -238,9 +285,45 @@ function animate() {
     controls.update();
 
 
+    // const chickenModel = scene.children[scene.children.length-2];
+    //
+    // const newPosition = Math.random() * 0.05
+    // const polar = Math.random() >= 0.5 ? 1 : -1
+    //
+    // if (Boolean(polar) === true) {
+    //     chickenModel.rotation.y = Math.PI * 0.5
+    // } else {
+    //     chickenModel.rotation.y = Math.PI * 1.5
+    // }
+    //
+    // chickenModel.position.x += newPosition * polar
+
+
     renderer.render( scene, camera );
 
 }
 
 animate()
 
+function moveChicken(){
+    // let timerId = setInterval(() => {
+    //     const chickenModel = scene.children[scene.children.length-2];
+    //
+    //     const newPosition = Math.random() * 0.05
+    //     const polar = Math.random() >= 0.5 ? 1 : -1
+    //
+    //     if (Boolean(polar) === true) {
+    //         chickenModel.rotation.y = Math.PI * 0.5
+    //     } else {
+    //         chickenModel.rotation.y = Math.PI * 1.5
+    //     }
+    //
+    //     chickenModel.position.x += newPosition * polar
+    // }, 300);
+
+
+
+    // requestAnimationFrame( moveChicken );
+}
+
+moveChicken()
