@@ -1,0 +1,11 @@
+Model Information:
+* title:	Chicken - rigged
+* source:	https://sketchfab.com/3d-models/chicken-rigged-6e3b93c078114c52bfe4cfa08b9843eb
+* author:	Maf'j Alvarez (https://sketchfab.com/blujay)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Chicken - rigged" (https://sketchfab.com/3d-models/chicken-rigged-6e3b93c078114c52bfe4cfa08b9843eb) by Maf'j Alvarez (https://sketchfab.com/blujay) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
