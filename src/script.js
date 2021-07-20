@@ -81,14 +81,14 @@ const addChickenModel = ( function (x = 0, z = 0){
         //     if ( node.isMesh || node.isLight ) node.receiveShadow = false;
         // } );
 
-        mixer = new THREE.AnimationMixer(model.scene);
+        // mixer = new THREE.AnimationMixer(model.scene);
         // model.animations.forEach((clip) => {mixer.clipAction(clip).play(); });
 
         // mixer.update( delta )
-        modelAnimations = model.animations
-        modelAnimationID = 0
+        // modelAnimations = model.animations
+        // modelAnimationID = 0
         console.log('model.scene', model.scene)
-        // action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
         // action.play();
         // model.scene.name = 'chicken';
         model.scene.rotation.y = Math.PI * 0.5
@@ -231,7 +231,7 @@ window.addEventListener('keydown', (event) => {
     const keyCode = event.keyCode
 
 
-    const foxModel = scene.children[scene.children.length-1];
+    const foxModel = scene.children[scene.children.length-2];
 
     // console.log('foxModel', foxModel)
 
