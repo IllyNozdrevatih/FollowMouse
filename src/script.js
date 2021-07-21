@@ -73,13 +73,13 @@ const addChickenModel = ( function (x = 0, z = 0){
         model.scene.position.z = z
 
         // console.log('model.castShadow', model.scene.receiveShadow)
-        // model.scene.castShadow = true; //default is false
-        // model.scene.receiveShadow = false; //default
+        model.scene.castShadow = true; //default is false
+        model.scene.receiveShadow = false; //default
 
-        // model.scene.traverse( function( node ) {
-        //     if ( node.isMesh || node.isLight ) node.castShadow = true;
-        //     if ( node.isMesh || node.isLight ) node.receiveShadow = false;
-        // } );
+        model.scene.traverse( function( node ) {
+            if ( node.isMesh || node.isLight ) node.castShadow = true;
+            if ( node.isMesh || node.isLight ) node.receiveShadow = false;
+        } );
 
         // mixer = new THREE.AnimationMixer(model.scene);
         // model.animations.forEach((clip) => {mixer.clipAction(clip).play(); });
