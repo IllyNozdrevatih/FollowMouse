@@ -163,6 +163,8 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.render(scene, camera)
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+renderer.outputEncoding = THREE.sRGBEncoding;
+
 // renderer.gammaOutput = true;
 
 // controls
