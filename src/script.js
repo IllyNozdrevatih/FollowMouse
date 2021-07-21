@@ -8,12 +8,32 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as dat from 'dat.gui';
 
 const gui = new dat.GUI();
-// global variables
-let mixer = null;
-let action = null;
-let modelAnimations = null;
-let modelAnimationID = null;
 
+class BaseModel {
+    constructor( name ) {
+        this.name = name
+        this.scene = null
+        this.mixer = null
+        this.action = null
+        this.modelAnimations = null
+        this.modelAnimationID = null
+    }
+}
+// global variables
+const foxModel = new BaseModel('Fox_Scene');
+const chickenModel = new BaseModel('Chicken_Scene');
+// keys
+const keyNumberLeft = 37
+const keyNumberTop = 38
+const keyNumberRight = 39
+const keyNumberDown = 40
+// rotationValues
+const rotation = {
+    top: Math.PI * 0.5,
+    right: Math.PI * 2,
+    bottom: Math.PI * 1.5,
+    left: Math.PI,
+}
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -31,28 +51,23 @@ const GLTFloader = new GLTFLoader();
 const addFoxModel = ( function (x = 0, z = 0){
     GLTFloader.load( '/models/azeria/scene.gltf', function ( model ) {
         model.scene.scale.set(0.01, 0.01, 0.01);
-        model.scene.rotation.y = Math.PI * 0.5 * -1
+        model.scene.rotation.y = Math.PI
         model.scene.position.x = x
         model.scene.position.z = z
 
-        // console.log('model.castShadow', model.scene.receiveShadow)
-        // model.scene.castShadow = true; //default is false
-        // model.scene.receiveShadow = false; //default
 
         model.scene.traverse( function( node ) {
             if ( node.isMesh || node.isLight ) node.castShadow = true;
             if ( node.isMesh || node.isLight ) node.receiveShadow = false;
         } );
 
-        mixer = new THREE.AnimationMixer(model.scene);
-        // model.animations.forEach((clip) => {mixer.clipAction(clip).play(); });
+        foxModel.mixer = new THREE.AnimationMixer(model.scene);
+        foxModel.modelAnimations = model.animations
+        foxModel.modelAnimationID = 0
 
-        // mixer.update( delta )
-        modelAnimations = model.animations
-        modelAnimationID = 0
-        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
-        action.setEffectiveTimeScale(0.3)
-        action.play();
+        foxModel.action = foxModel.mixer.clipAction( foxModel.modelAnimations[ foxModel.modelAnimationID ] );
+        foxModel.action.setEffectiveTimeScale(0.3)
+        foxModel.action.play();
 
         scene.add(model.scene)
     }, undefined, function ( error ) {
@@ -67,27 +82,23 @@ addFoxModel(0.5, 0)
  */
 const addChickenModel = ( function (x = 0, z = 0){
     GLTFloader.load( '/models/chicken/scene.gltf', function ( model ) {
-        model.scene.scale.set(0.001, 0.001, 0.001);
-        // model.scene.rotation.y = Math.PI * 0.5 * -1
+        model.scene.scale.set(0.0008, 0.0008, 0.0008);
         model.scene.position.x = x
         model.scene.position.z = z
-
-        // console.log('model.castShadow', model.scene.receiveShadow)
 
         model.scene.traverse( function( node ) {
             if ( node.isMesh || node.isLight ) node.castShadow = true;
             if ( node.isMesh || node.isLight ) node.receiveShadow = false;
         } );
 
-        // mixer = new THREE.AnimationMixer(model.scene);
-        // model.animations.forEach((clip) => {mixer.clipAction(clip).play(); });
-
-        // mixer.update( delta )
-        // modelAnimations = model.animations
-        // modelAnimationID = 0
+        chickenModel.mixer = new THREE.AnimationMixer(model.scene);
+        chickenModel.modelAnimationID = 6
+        chickenModel.modelAnimations = model.animations
+        chickenModel.action = chickenModel.mixer.clipAction( chickenModel.modelAnimations[ 6 ] );
+        chickenModel.action.setEffectiveTimeScale(0.3)
         console.log('model.scene', model.scene)
-        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
-        // action.play();
+        // action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
+        chickenModel.action.play();
         model.scene.rotation.y = Math.PI * 0.5
 
         scene.add(model.scene)
@@ -109,7 +120,6 @@ plane.rotation.x = Math.PI * 0.5 * -1;
 
 scene.add(plane)
 
-
 /**
  * Light
  */
@@ -123,9 +133,6 @@ directionalLight.shadow.mapSize.width = 512 * 3
 directionalLight.shadow.mapSize.height = 512 * 3
 
 scene.add(directionalLight);
-
-const helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
-// scene.add( helper );
 
 gui.add(directionalLight.position,'x').min(-5).max(5).step(0.05).name('directional x')
 gui.add(directionalLight.position,'y').min(0).max(5).step(0.05).name('directional y')
@@ -160,7 +167,6 @@ renderer.render(scene, camera)
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 renderer.outputEncoding = THREE.sRGBEncoding;
-
 // renderer.gammaOutput = true;
 
 // controls
@@ -220,49 +226,54 @@ controls.enableZoom = true
 
 
 window.addEventListener('keydown', (event) => {
-    const keyNumberLeft = 37
-    const keyNumberTop = 38
-    const keyNumberRight = 39
-    const keyNumberDown = 40
-
     const scalePosition = 0.05
     const keyCode = event.keyCode
 
+    const inActivePositionBorder = 2.8
 
-    const foxModel = scene.children[scene.children.length-2];
-
-    // console.log('foxModel', foxModel)
+    const foxModelID = scene.children.findIndex(element => element.name === foxModel.name)
+    foxModel.scene = scene.children[foxModelID];
 
     if (keyCode === keyNumberTop) {
-        if (foxModel.rotation.y !== Math.PI * 0.5) foxModel.rotation.y = Math.PI * 0.5
-        foxModel.position.x += scalePosition
+        foxModel.scene.rotation.y = rotation.top
+        if(inActivePositionBorder > foxModel.scene.position.x + scalePosition) {
+            foxModel.scene.position.x += scalePosition
+        }
     }
     if (keyCode === keyNumberDown) {
-        if (foxModel.rotation.y !== Math.PI * 1.5) foxModel.rotation.y = Math.PI * 1.5
-        foxModel.position.x -= scalePosition
+        foxModel.scene.rotation.y = rotation.bottom
+        if(-inActivePositionBorder > foxModel.scene.position.x - scalePosition) {
+            foxModel.scene.position.x += scalePosition
+        }
+        foxModel.scene.position.x -= scalePosition
     }
     if (keyCode === keyNumberLeft) {
-        if (foxModel.rotation.y !== Math.PI) foxModel.rotation.y = Math.PI
-        foxModel.position.z -= scalePosition
+        foxModel.scene.rotation.y = rotation.left
+        if(-inActivePositionBorder < foxModel.scene.position.z - scalePosition) {
+            foxModel.scene.position.z -= scalePosition
+        }
     }
     if (keyCode === keyNumberRight) {
-        if (foxModel.rotation.y !== Math.PI * 2) foxModel.rotation.y = Math.PI * 2
-        foxModel.position.z += scalePosition
+        console.log('right')
+        foxModel.scene.rotation.y = rotation.right
+        if(inActivePositionBorder > foxModel.scene.position.z + scalePosition) {
+            foxModel.scene.position.z += scalePosition
+        }
     }
 
-    if (modelAnimationID === 0){
-        action.stop();
-        modelAnimationID = 1
-        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
-        action.play();
+    if (foxModel.modelAnimationID === 0){
+        foxModel.action.stop();
+        foxModel.modelAnimationID = 1
+        foxModel.action = foxModel.mixer.clipAction( foxModel.modelAnimations[ foxModel.modelAnimationID ] );
+        foxModel.action.play();
     }
 })
 window.addEventListener('keyup', (event) => {
-    if (modelAnimationID === 1){
-        action.stop();
-        modelAnimationID = 0
-        action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
-        action.play();
+    if (foxModel.modelAnimationID === 1){
+        foxModel.action.stop();
+        foxModel.modelAnimationID = 0
+        foxModel.action = foxModel.mixer.clipAction( foxModel.modelAnimations[ foxModel.modelAnimationID ] );
+        foxModel.action.play();
     }
 })
 
@@ -270,58 +281,68 @@ window.addEventListener('keyup', (event) => {
 const clock = new THREE.Clock()
 
 function animate() {
-    const elapsedTime = clock.getElapsedTime()
-
     requestAnimationFrame( animate );
-
 
     // const delta = clock.getDelta();
 
-    if ( mixer ) mixer.update( 0.01 );
+    if ( foxModel.mixer ) foxModel.mixer.update( 0.01 );
 
     // required if controls.enableDamping or controls.autoRotate are set to true
     controls.update();
-
-
-    // const chickenModel = scene.children[scene.children.length-2];
-    //
-    // const newPosition = Math.random() * 0.05
-    // const polar = Math.random() >= 0.5 ? 1 : -1
-    //
-    // if (Boolean(polar) === true) {
-    //     chickenModel.rotation.y = Math.PI * 0.5
-    // } else {
-    //     chickenModel.rotation.y = Math.PI * 1.5
-    // }
-    //
-    // chickenModel.position.x += newPosition * polar
-
-
-    renderer.render( scene, camera );
-
 }
 
 animate()
 
 function moveChicken(){
-    // let timerId = setInterval(() => {
-    //     const chickenModel = scene.children[scene.children.length-2];
-    //
-    //     const newPosition = Math.random() * 0.05
-    //     const polar = Math.random() >= 0.5 ? 1 : -1
-    //
-    //     if (Boolean(polar) === true) {
-    //         chickenModel.rotation.y = Math.PI * 0.5
-    //     } else {
-    //         chickenModel.rotation.y = Math.PI * 1.5
-    //     }
-    //
-    //     chickenModel.position.x += newPosition * polar
-    // }, 300);
+    const elapsedTime = clock.getElapsedTime()
+    const scalePosition = 0.001
 
+    const chickenModelID = scene.children.findIndex(element => element.name === chickenModel.name)
 
+    if (chickenModelID === -1) {
+        renderer.render( scene, camera );
+        requestAnimationFrame( moveChicken );
+        return;
+    }
 
-    // requestAnimationFrame( moveChicken );
+    chickenModel.scene = scene.children[chickenModelID];
+
+    const newPosition = Math.sin(elapsedTime)
+    const polar = chickenModel.scene.position.x > newPosition
+
+    chickenModel.action.play()
+
+    if (polar === true) {
+        // rotation top
+        chickenModel.scene.rotation.y = Math.PI * 2
+    } else {
+        // rotation bottom
+        chickenModel.scene.rotation.y = Math.PI
+    }
+
+    chickenModel.scene.position.x = Math.sin(elapsedTime)
+
+    if ( chickenModel.mixer ) chickenModel.mixer.update( 0.015 );
+
+    if ( !!foxModel.scene === false ) {
+        renderer.render( scene, camera );
+        requestAnimationFrame( moveChicken );
+        return;
+    }
+
+    if (foxModel.scene.position.x - chickenModel.scene.position.x < 1) {
+        // console.log('die')
+    }
+
+    renderer.render( scene, camera );
+    requestAnimationFrame( moveChicken );
 }
 
 moveChicken()
+
+// const modal = document.getElementById('modal')
+// function hideModal() {
+//     modal.style.opacity = 0;
+// }
+// hideModal()
+// window.addEventListener('keydown', hideModal)
