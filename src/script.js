@@ -73,8 +73,6 @@ const addChickenModel = ( function (x = 0, z = 0){
         model.scene.position.z = z
 
         // console.log('model.castShadow', model.scene.receiveShadow)
-        model.scene.castShadow = true; //default is false
-        model.scene.receiveShadow = false; //default
 
         model.scene.traverse( function( node ) {
             if ( node.isMesh || node.isLight ) node.castShadow = true;
@@ -90,9 +88,7 @@ const addChickenModel = ( function (x = 0, z = 0){
         console.log('model.scene', model.scene)
         action = mixer.clipAction( modelAnimations[ modelAnimationID ] );
         // action.play();
-        // model.scene.name = 'chicken';
         model.scene.rotation.y = Math.PI * 0.5
-        // model.scene.renderOrder = 1
 
         scene.add(model.scene)
     }, undefined, function ( error ) {
