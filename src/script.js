@@ -254,7 +254,6 @@ window.addEventListener('keydown', (event) => {
         }
     }
     if (keyCode === keyNumberRight) {
-        console.log('right')
         foxModel.scene.rotation.y = rotation.right
         if(inActivePositionBorder > foxModel.scene.position.z + scalePosition) {
             foxModel.scene.position.z += scalePosition
