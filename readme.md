@@ -1,6 +1,6 @@
 # Three.js 
 
-https://6146754610666a0007352a34--romantic-almeida-3b770d.netlify.app/
+https://romantic-almeida-3b770d.netlify.app/
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
