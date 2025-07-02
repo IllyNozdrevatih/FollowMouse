@@ -16,3 +16,4 @@ npm run dev
 # Build for production in the dist/ directory
 npm run build
 ```
+Can to move fox by keyboard arrows  ↑ ↓  ← → 
